@@ -1,0 +1,55 @@
+# Personal files
+----------------
+SECRET*
+config.js
+favicon*
+
+# Compiled source
+-----------------
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.pyc
+
+# Packages
+----------
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.tgz
+
+# Dependencies
+--------------
+node_modules/
+jspm_packages/
+
+# Logs/Databases
+----------------
+*.log
+*.sql
+*.sqlite
+
+# Backup/Temp files
+-------------------
+*.bak
+*.swp
+*.swo
+
+# OS files
+----------
+.DS_Store*
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+

@@ -1,0 +1,29 @@
+{
+  "name": "teteroom",
+  "version": "1.0.0",
+  "description": "Small project to learn by building a chatroom",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mattbrazza/Teteroom.git"
+  },
+  "homepage": "https://github.com/mattbrazza/Teteroom",
+  "bugs": {
+    "url": "https://github.com/mattbrazza/Teteroom/issues"
+  },
+  "keywords": [
+    "Chatroom",
+    "NodeJS",
+    "Sockets"
+  ],
+  "author": "mattbrazza",
+  "license": "ISC",
+  "engines": {
+    "node": "^8.1.2"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3"
+  }
+}
+
