@@ -1,0 +1,21 @@
+<html>
+<head>
+  <title>Teteroom</title>
+  <script src="/socket.io/socket.io.js" rel="text/javascript"></script>
+<script>
+
+var socket = io.connect('http://127.0.0.1');
+socket.on('news', function(data){
+  console.log(data):
+  socket.emit('other event', {msg: 'message'});
+});
+
+</script>
+</head>
+<body>
+  <div id="txt">
+    Hello World!
+  </div>
+</body>
+</html>
+
