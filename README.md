@@ -16,7 +16,7 @@ _Project to learn from, a small Chatroom in NodeJS_
 
 --- --- --- --- --- --- --- --- --- --- --- ---
 #### Stream of Consciousness:
-_(General thoughts written down as I was coding)_
+_(General thoughts written down as I was coding)_  
 Naming a project is half the battle.  
 
 

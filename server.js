@@ -5,14 +5,21 @@ const exApp = express();
 
 /* CONFIGURATION */
 const config = require('./config.js'); config.setConfigs();
+exApp.use(bodyParser.json());
 
 /* ROUTING */
 exApp.get('/', function(req, res){
-  res.status(200, 'Hello World');
+  res.status(200).send('Hello World\n');
 });
 
 exApp.post('/', function(req, res){
-  res.status(200, 'Successful POSTing');
+  let msg = req.body.message;
+  if (!msg) {
+    res.status(400).send('No message\n');
+  } else {
+    res.status(200).send('Successful POSTing\n');
+  }
+
 });
 
 
