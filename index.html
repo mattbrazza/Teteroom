@@ -4,11 +4,20 @@
   <script src="/socket.io/socket.io.js" rel="text/javascript"></script>
 <script>
 
-var socket = io.connect('http://127.0.0.1');
+var socket = io.connect('http://127.0.0.1:2000');
 socket.on('news', function(data){
-  console.log(data):
+  console.log(data);
+    document.getElementById('txt').innerHTML = data.txt;
+
   socket.emit('other event', {msg: 'message'});
 });
+
+var fn = function(){
+  var el = document.getElementById('inp');
+  var data = el.value;
+  socket.emit('other event', {msg: data});
+  el.value = '';
+};
 
 </script>
 </head>
@@ -16,6 +25,8 @@ socket.on('news', function(data){
   <div id="txt">
     Hello World!
   </div>
+  <input id="inp" placeholder="enter text here" type="text"/>
+  <input onClick="fn()" type="Submit" value="Submit"/>
 </body>
 </html>
 

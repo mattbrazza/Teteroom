@@ -2,9 +2,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const exApp = express();
-// const server = require('http').Server(exApp);
-// const io = require('socket.io')(server);
-// server.listen(80);
+// SOCKET.IO STUFF
+const server = require('http').Server(exApp);
+const io = require('socket.io')(server);
 
 /* CONFIGURATION */
 const config = require('./config.js'); config.setConfigs();
@@ -41,5 +41,6 @@ exApp.post('/', function(req, res){
 
 /* RUN IT */
 const PORT_NO = process.env.PORT_NO || 2000;
-exApp.listen(PORT_NO, () => { console.log('LISTENING ON ', PORT_NO); });
+//exApp.listen(PORT_NO, () => { console.log('LISTENING ON ', PORT_NO); });
+server.listen(PORT_NO);
 
