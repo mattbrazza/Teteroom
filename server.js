@@ -9,6 +9,7 @@ const io = require('socket.io')(server);
 /* CONFIGURATION */
 const config = require('./config.js'); config.setConfigs();
 exApp.use(bodyParser.json());
+exApp.use(express.static(__dirname + '/'));
 
 /* ROUTING */
 exApp.get('/', function(req, res){
@@ -16,28 +17,12 @@ exApp.get('/', function(req, res){
 });
 
 io.on('connection', function(socket){
-  socket.emit('news', {txt: 'hello world'});
-  socket.on('other event', function(data){
-    console.log(data);
+  socket.on('newMsg', function(data){
+    console.log('Data server-rec: ', data);
+    socket.emit('msg', data);           // for ourselves
+    socket.broadcast.emit('msg', data); // for others
   });
 });
-
-
-/*
-exApp.get('/', function(req, res){
-  res.status(200).send('Hello World\n');
-});
-
-exApp.post('/', function(req, res){
-  let msg = req.body.message;
-  if (!msg) {
-    res.status(400).send('No message\n');
-  } else {
-    res.status(200).send('Successful POSTing\n');
-  }
-});
-*/
-
 
 /* RUN IT */
 const PORT_NO = process.env.PORT_NO || 2000;

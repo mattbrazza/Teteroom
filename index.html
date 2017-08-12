@@ -1,32 +1,44 @@
 <html>
 <head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teteroom</title>
+
+  <!-- Bootstrap / Styling -->
+  <link rel="stylesheet" crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"/>
   <script src="/socket.io/socket.io.js" rel="text/javascript"></script>
-<script>
+  <script src="/script.js" rel="text/javascript"></script>
 
-var socket = io.connect('http://127.0.0.1:2000');
-socket.on('news', function(data){
-  console.log(data);
-    document.getElementById('txt').innerHTML = data.txt;
-
-  socket.emit('other event', {msg: 'message'});
-});
-
-var fn = function(){
-  var el = document.getElementById('inp');
-  var data = el.value;
-  socket.emit('other event', {msg: data});
-  el.value = '';
-};
-
-</script>
+  <style>
+    body { padding-top: 65px; }
+  </style>
 </head>
 <body>
-  <div id="txt">
-    Hello World!
-  </div>
-  <input id="inp" placeholder="enter text here" type="text"/>
-  <input onClick="fn()" type="Submit" value="Submit"/>
+  <div class="container">
+    <div class="header">
+      <h3>Welcome to Teteroom, Tete-a-Tete</h3>
+    </div>
+
+    <div class="row">
+      <div class="well">
+        <ul id="list" class="list-group">
+          <li class="list-group-item">First message...</li>
+          <li class="list-group-item">Second message</li>
+        </ul>
+      </div>
+    </div> <!-- row -->
+
+    <div class="row">
+      <div class="col-md-10 well well-sm">
+        <input id="msgTxt" class="form-control" placeholder="Enter message here..." type="text"/>
+      </div>
+      <div class="col-md-2 well well-sm">
+        <button onClick="submitMsg()" class="btn btn-primary" role="button">Send msg</button>
+      </div>
+    </div> <!-- row -->
+
+  </div> <!-- container -->
 </body>
 </html>
 
