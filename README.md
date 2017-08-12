@@ -14,6 +14,7 @@ _Project to learn from, a small Chatroom in NodeJS_
 
 #### Day-2 Ideas/Needs:
 + Try to implement a version without Socket.io (advance learning)
++ Create a version that will allow for persistency
 
 --- --- --- --- --- --- --- --- --- --- --- ---
 #### Stream of Consciousness:

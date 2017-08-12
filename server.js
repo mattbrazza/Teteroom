@@ -17,10 +17,17 @@ exApp.get('/', function(req, res){
 });
 
 io.on('connection', function(socket){
-  socket.on('newMsg', function(data){
-    console.log('Data server-rec: ', data);
-    socket.emit('msg', data);           // for ourselves
-    socket.broadcast.emit('msg', data); // for others
+  console.log('SOCKET: ', socket);
+
+  socket.join('myRm', function(){
+    let rooms = Object.keys(socket.rooms);
+    console.log(rooms);
+    io.to('myRm', {'msg': 'NEW USER HAS JOINED!'});
+  }) //; socket
+  .on('newMsg', function(data, id){
+    console.log('Data server-rec: ', id, '--',  data);
+    // socket. (to socket), socket.broadcast (everyone, but socket), io. (to all)
+    io.emit('msg', data); // for others
   });
 });
 
