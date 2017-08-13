@@ -1,7 +1,24 @@
+var app = new Vue({
+el: "#v-app",
+
+data: {
+  test: 'test message',
+  current_chatroom: 'room-0',
+  rooms: ['Geny','Home','EastVil']
+},
+
+methods: {
+  changeText: function(){
+    this.test = 'new ' + this.test;
+    return;
+  }
+}
+});
+
 var socket = io.connect('http://127.0.0.1:2000');
 
 socket.on('msg', function(data){
-  console.log('Data received: ', data);
+//  console.log('Data received: ', data);
 
   if (data.msg) {
     let ul = document.getElementById('list');
@@ -33,7 +50,7 @@ var submitMsg = function(){
     time: Date.now()
   };
 
-  console.log('Data sending: ', data);
+//  console.log('Data sending: ', data);
   socket.emit('newMsg', data);
 
   msgTxt.value = '';

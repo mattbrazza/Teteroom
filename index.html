@@ -7,38 +7,66 @@
 
   <!-- Bootstrap / Styling -->
   <link rel="stylesheet" crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"/>
-  <script src="/socket.io/socket.io.js" rel="text/javascript"></script>
-  <script src="/script.js" rel="text/javascript"></script>
-
   <style>
-    body { padding-top: 65px; }
+    body { padding-top: 30px; /*65px*/ }
   </style>
 </head>
 <body>
-  <div class="container">
+  <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+    ADD A MODAL THAT IS LIKE USER LOGIN 
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+  <div id="v-app" class="container">
     <div class="header">
-      <h3>Welcome to Teteroom, Tete-a-Tete</h3>
-    </div>
+      <h3>Welcome to Teteroom, Tete-a-Tete - {{ test }}</h3>
+<button v-on:click="changeText" class="btn btn-sm btn-primary">Change</button>
+    </div> <!-- header -->
 
     <div class="row">
+
+      <!-- LEFT-BAR -->
+      <div class="col-md-3">
+      <div class="well well-sm">
+        <center><h3>ROOMS:</h3></center>
+        <ul class="list-group">
+          <li class="list-group-item">General<span class="badge">#</span></li>
+          <li class="list-group-item active">House<span class="badge">#</span></li>
+          <li class="list-group-item">NYC-FiDi<span class="badge">#</span></li>
+          <ul class="list-group">
+            <li v-for="room in rooms" class="list-group-item">{{ room }}</li>
+          </ul>
+        </ul>
+      </div><!-- well -->
+      </div><!-- col-md-4 -->
+
+      <!-- CHAT MESSAGES -->
+      <div class="col-md-9">
       <div class="well">
+        <div class="header">
+          <center><h3>Chatroom: {{ current_chatroom }}</h3></center>
+        </div>
         <ul id="list" class="list-group">
           <li class="list-group-item">First message...</li>
           <li class="list-group-item">Second message</li>
         </ul>
-      </div>
-    </div> <!-- row -->
+      </div><!-- well -->
 
-    <div class="row">
+      <!-- MESSAGE SUBMIT -->
       <div class="col-md-10 well well-sm">
         <input id="msgTxt" class="form-control" placeholder="Enter message here..." type="text"/>
       </div>
       <div class="col-md-2 well well-sm">
         <button onClick="submitMsg()" class="btn btn-primary" role="button">Send msg</button>
       </div>
-    </div> <!-- row -->
+      </div><!-- col-md-8 -->
 
+    </div> <!-- row -->
   </div> <!-- container -->
 </body>
+
+<!-- Libraries/Controllers (order matters) -->
+<script src="https://unpkg.com/vue" rel="text/javascript"></script>
+<script src="/socket.io/socket.io.js" rel="text/javascript"></script>
+<script src="app/app.js" rel="text/javascript"></script>
+
 </html>
 
