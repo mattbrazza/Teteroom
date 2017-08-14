@@ -1,19 +1,60 @@
-var app = new Vue({
+var vApp = new Vue({
 el: "#v-app",
 
 data: {
-  test: 'test message',
-  current_chatroom: 'room-0',
-  rooms: ['Geny','Home','EastVil']
+  id_inc: 5,
+  rooms: [
+    { id: 1, title: 'General', isActive: true },
+    { id: 2, title: 'HomeGrp', isActive: false },
+  ],
+  currRm: '',
 },
 
 methods: {
-  changeText: function(){
-    this.test = 'new ' + this.test;
+  addRoom: function(){
+    let newRmInpt = document.getElementById('newRmInpt');
+    if (!newRmInpt.value) { console.error('Room must have a name'); return; }
+
+    let newRm = {
+      id: this.id_inc + 1,
+      title: newRmInpt.value,
+      isActive: false
+    };
+    this.id_inc += 1;
+    this.rooms.push(newRm);
+    newRmInpt.value = '';
     return;
-  }
+  },
+
+  delRoom: function(index){
+    let rm = this.rooms[index];
+    if (rm.id === this.currRm.id) {
+      console.error('Cannot delete current room');
+    } else {
+      console.log('Deleting room: ', rm);
+      this.rooms.splice(index,1);
+      console.log('Rooms is now: ', this.rooms);
+    }
+
+    return;
+  },
+
+  modRoom: function(index){
+    let rm = this.rooms[index];
+console.log('Current Room: ', this.currRm, ' -Room: ', rm);
+    if (rm.id === this.currRm.id) { console.error('Already current room'); return; }
+
+    this.currRm.isActive = false;
+    this.currRm = rm;
+    this.currRm.isActive = true;
+    return;
+  },
+
+  initial: function(){ this.currRm = this.rooms[0] },
 }
 });
+
+vApp.initial();
 
 var socket = io.connect('http://127.0.0.1:2000');
 
