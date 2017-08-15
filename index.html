@@ -38,6 +38,17 @@
           </li>
         </ul>
       </div><!-- well -->
+
+      <div class="well well-sm">
+        <center><h3>USERS:</h3></center>
+        <ul class="list-group">
+          <li class="list-group-item"
+            v-for="(user, index) in users" v-bind:class="{active: user.isYou}">
+            {{ user.name }}
+          </li>
+        </ul>
+      </div><!-- well -->
+ 
       </div><!-- col-md-4 -->
 
       <!-- CHAT MESSAGES -->

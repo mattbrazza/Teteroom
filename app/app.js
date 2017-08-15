@@ -1,66 +1,89 @@
-var vApp = new Vue({
-el: "#v-app",
-
+var vApp = new Vue({ el: "#v-app",
 data: {
-  id_inc: 5,
-  rooms: [
-    { id: 1, title: 'General', isActive: true },
-    { id: 2, title: 'HomeGrp', isActive: false },
-  ],
+  currId: 1, // starting at 1 b/c 0 is 'General'
   currRm: '',
+  currUsr: '',
+  rooms: [
+    { id: 0, title: 'General', isActive: true },
+  ],
+  users: [
+    { id: 0, name: 'Anon.', isYou: true },
+  ],
 },
 
 methods: {
+  /* Create a new room */
   addRoom: function(){
+    let errMsg = null;
     let newRmInpt = document.getElementById('newRmInpt');
-    if (!newRmInpt.value) { console.error('Room must have a name'); return; }
+    if (!newRmInpt.value) {
+      errMsg = 'Room must have a name';
+      return;
+    }
 
     let newRm = {
-      id: this.id_inc + 1,
+      id: this.currId++,
       title: newRmInpt.value,
       isActive: false
     };
-    this.id_inc += 1;
     this.rooms.push(newRm);
     newRmInpt.value = '';
+
     return;
   },
 
+  /* Delete a room */
   delRoom: function(index){
+    let errMsg = null;
     let rm = this.rooms[index];
     if (rm.id === this.currRm.id) {
-      console.error('Cannot delete current room');
-    } else {
-      console.log('Deleting room: ', rm);
-      this.rooms.splice(index,1);
-      console.log('Rooms is now: ', this.rooms);
+      errMsg = 'Cannot delete current room';
+      return;
     }
+
+    this.rooms.splice(index, 1);
 
     return;
   },
 
+  /* Modify which is the current room */
   modRoom: function(index){
+    let errMsg = null;
     let rm = this.rooms[index];
-console.log('Current Room: ', this.currRm, ' -Room: ', rm);
-    if (rm.id === this.currRm.id) { console.error('Already current room'); return; }
+    if (rm.id === this.currRm.id) {
+      errMsg = currRm.title + 'is already the current room';
+      return;
+    }
 
     this.currRm.isActive = false;
     this.currRm = rm;
     this.currRm.isActive = true;
+
     return;
   },
 
-  initial: function(){ this.currRm = this.rooms[0] },
+  /* Use to initialize items when Vue loads */
+  initializeVue: function(){
+    this.currId = 1;
+    this.currRm = this.rooms[0];
+    this.currUsr = this.users[0];
+  },
+
+  addUser: function(usr){ this.users.push(usr); },
 }
 });
+vApp.initializeVue();
 
-vApp.initial();
 
 var socket = io.connect('http://127.0.0.1:2000');
+var idd = 33;
+
+socket.on('new_user', function(){
+  vApp.addUser({id: idd, name: 'A'+idd, isYou: false});
+  idd++;
+});
 
 socket.on('msg', function(data){
-//  console.log('Data received: ', data);
-
   if (data.msg) {
     let ul = document.getElementById('list');
 
@@ -74,7 +97,6 @@ socket.on('msg', function(data){
   } else {
     console.error('NO DATA.MSG');
   }
-
 });
 
 var submitMsg = function(){

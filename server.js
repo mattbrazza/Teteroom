@@ -18,6 +18,7 @@ exApp.get('/', function(req, res){
 
 io.on('connection', function(socket){
 //  console.log('SOCKET: ', socket);
+  io.emit('new_user', {});
 
   socket.join('myRm', function(){
     let rooms = Object.keys(socket.rooms);
@@ -29,6 +30,7 @@ io.on('connection', function(socket){
     // socket. (to socket), socket.broadcast (everyone, but socket), io. (to all)
     io.emit('msg', data); // for others
   });
+
 });
 
 /* RUN IT */
