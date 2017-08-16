@@ -2,42 +2,44 @@ var vApp = new Vue({ el: "#v-app",
 data: {
   currId: 1, // starting at 1 b/c 0 is 'General'
   currRm: '',
-  currUsr: '',
+  currUser: '',
   rooms: [
     { id: 0, title: 'General', isActive: true },
   ],
   users: [
     { id: 0, name: 'Anon.', isYou: true },
   ],
+  errMsg: '',
+  newRmName: '',
+  newMsgTxt: '',
 },
 
 methods: {
   /* Create a new room */
   addRoom: function(){
-    let errMsg = null;
-    let newRmInpt = document.getElementById('newRmInpt');
-    if (!newRmInpt.value) {
-      errMsg = 'Room must have a name';
+    this.errMsg = null;
+    if (!this.newRmName) {
+      this.errMsg = 'Room must have a name';
       return;
     }
 
     let newRm = {
       id: this.currId++,
-      title: newRmInpt.value,
+      title: this.newRmName,
       isActive: false
     };
     this.rooms.push(newRm);
-    newRmInpt.value = '';
+    this.newRmName = '';
 
     return;
   },
 
   /* Delete a room */
   delRoom: function(index){
-    let errMsg = null;
+    this.errMsg = null;
     let rm = this.rooms[index];
     if (rm.id === this.currRm.id) {
-      errMsg = 'Cannot delete current room';
+      this.errMsg = 'Cannot delete current room';
       return;
     }
 
@@ -48,10 +50,10 @@ methods: {
 
   /* Modify which is the current room */
   modRoom: function(index){
-    let errMsg = null;
+    this.errMsg = null;
     let rm = this.rooms[index];
     if (rm.id === this.currRm.id) {
-      errMsg = currRm.title + 'is already the current room';
+      this.errMsg = this.currRm.title + ' is already the current room';
       return;
     }
 
@@ -62,11 +64,28 @@ methods: {
     return;
   },
 
+  submitMsg: function(){
+    this.errMsg = null;
+    if (!this.newMsgTxt) {
+      this.errMsg = 'Cannot send a blank message';
+      return;
+    }
+
+    let newMsg = {
+      text: this.newMsgTxt,
+      user: this.currUser
+    };
+    // TODO: Send message via socket
+    this.newMsgTxt = '';
+
+    return;    
+  },
+
   /* Use to initialize items when Vue loads */
   initializeVue: function(){
     this.currId = 1;
     this.currRm = this.rooms[0];
-    this.currUsr = this.users[0];
+    this.currUser = this.users[0];
   },
 
   addUser: function(usr){ this.users.push(usr); },
@@ -100,8 +119,12 @@ socket.on('msg', function(data){
 });
 
 var submitMsg = function(){
+  vApp.errMsg = null;
   var msgTxt = document.getElementById('msgTxt');
-  if (!msgTxt.value) { console.error('No blank msg'); return; }
+  if (!msgTxt.value) {
+    vApp.errMsg = 'Cannot submit a blank message'; 
+    return;
+  }
 
   let username = 'Anony'; // TODO: create users...
   let data = {
