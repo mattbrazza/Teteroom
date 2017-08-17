@@ -9,6 +9,12 @@
   <link rel="stylesheet" crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"/>
   <style>
     body { padding-top: 25px; /*65px*/ }
+    .panel-heading { text-align: center; font-weight: bold; }
+    .panel-body { overflow-y: scroll; }
+    li.list-group-item.active {}
+
+    #room-list, #user-list { height: 30%; }
+    #chat-list { height: 60%; }
   </style>
 </head>
 <body>
@@ -26,20 +32,25 @@
 
       <!-- LEFT-BAR -->
       <div class="col-md-3">
+      <div class="panel-group">
 
       <!-- ROOM LIST -->
-      <div class="well well-sm">
-        <center><h3>ROOMS:</h3></center>
-        <ul class="list-group">
-          <li class="list-group-item" v-bind:class="{active: room.isActive}"
-            v-for="(room, index) in rooms" v-on:click="modRoom(index)">
-            {{ room.title }}
-            <span class="glyphicon glyphicon-remove pull-right"
-              v-if="!room.isActive" v-on:click="delRoom(index)"></span>
-          </li>
+      <div class="panel panel-primary">
+        <div class="panel-heading">ROOMS:</div>
 
-          <br/>
-          <!-- Submit new room -->
+        <div class="panel-body" id="room-list">
+          <ul class="list-group">
+            <li class="list-group-item" v-bind:class="{active: room.isActive}"
+              v-for="(room, index) in rooms" v-on:click="modRoom(index)">
+              {{ room.title }}
+              <span class="glyphicon glyphicon-remove pull-right"
+                v-if="!room.isActive" v-on:click="delRoom(index)"></span>
+            </li>
+          <ul>
+        </div> <!-- panel-body -->
+
+        <!-- SUBMIT NEW ROOM -->
+        <div class="panel-footer">
           <div class="input-group">
             <input class="form-control" placeholder="New room name..."
               v-model.trim="newRmName" type="text"/>
@@ -48,45 +59,54 @@
                 v-on:click="addRoom" role="button">+</button>
             </div>
           </div>
-        </ul>
-      </div><!-- well ROOM LIST -->
+        </div> <!-- panel-footer -->
+      </div> <!-- panel ROOM LIST -->
 
       <!-- USER LIST -->
-      <div class="well well-sm">
-        <center><h3>USERS:</h3><small><i>for current room</i></small></center>
-        <ul class="list-group">
-          <li class="list-group-item"
-            v-for="(user, index) in users" v-bind:class="{active: user.isYou}">
-            {{ user.name }}
-          </li>
-        </ul>
-      </div><!-- well USER LIST -->
- 
-      </div><!-- col LEFT BAR -->
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <span class="glyphicon glyphicon-user"></span> USERS:
+        </div>
+
+        <div class="panel-body" id="user-list">
+          <ul class="list-group">
+            <li class="list-group-item"
+              v-for="(user, index) in users" v-bind:class="{active: user.isYou}">
+              {{ user.name }}
+            </li>
+          </ul>
+        </div> <!-- panel-body -->
+      </div> <!-- USER LIST -->
+
+      </div> <!-- panel-group -->
+      </div> <!-- col LEFT BAR -->
 
       <!-- CHAT MESSAGES -->
-      <div class="col-md-9 well">
-        <div class="header">
-          <center><h3>Chatroom: {{ currRm }}</h3></center>
-        </div>
+      <div class="col-md-9">
+      <div class="panel panel-primary">
+        <div class="panel-heading">Chatroom: {{ currRm }}</div>
         
-        <ul id="list" class="list-group">
-          <li class="list-group-item">First message...</li>
-          <li class="list-group-item">Second message</li>
-        </ul>
+        <div class="panel-body" id="chat-list">
+          <ul id="list" class="list-group">
+            <li v-for="n in 10" class="list-group-item">A test message.</li>
+          </ul>
+        </div> <!-- panel-body -->
 
         <!-- MESSAGE SUBMIT -->
+        <div class="panel-footer">
         <div class="input-group">
+          <!-- <input id="msgTxt"/><button onClick="submitMsg()">S</button> -->
           <input class="form-control" placeholder="Enter message here..."
             v-model.trim="newMsgTxt" type="text"/>
           <div class="input-group-btn">
             <button v-on:click="submitMsg" class="btn btn-primary" role="button">
             Send Msg</button>
           </div>
-        </div> <!-- input-group MSG SUBMIT-->
-<input id="msgTxt"/><button onClick="submitMsg()">S</button>
+        </div> <!-- input-group MSG SUBMIT -->
+        </div> <!-- panel-footer -->
 
-      </div><!-- col well CHAT MSG -->
+      </div> <!-- panel CHAT MSG -->
+      </div> <!-- col -->
 
     </div> <!-- row -->
   </div> <!-- container -->

@@ -14,6 +14,10 @@ data: {
   newMsgTxt: '',
 },
 
+created: function(){
+  // when Vue inits
+},
+
 methods: {
   /* Create a new room */
   addRoom: function(){
