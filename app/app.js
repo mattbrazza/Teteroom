@@ -12,10 +12,27 @@ data: {
   errMsg: '',
   newRmName: '',
   newMsgTxt: '',
+  messages: [],
 },
 
-created: function(){
-  // when Vue inits
+created: function(){ // when Vue inits
+  /* Add joined user to list, announce */
+  socket.on('user.joined', function(socketId){
+    this.users.push(socketId);
+  }.bind(this));
+
+  /* Remove user from list, announce */
+  socket.on('user.left', function(socketId{
+    let index = this.users.indexOf(socketId);
+    if (index >= 0) {
+      this.users.splice(index,1);
+    }
+  }.bind(this));
+
+  /* Add new message to chat window */
+  socket.on('chat.msg', function(recv_msg){
+    this.messages.push(recv_msg);
+  }.bind(this));
 },
 
 methods: {
@@ -82,7 +99,11 @@ methods: {
     // TODO: Send message via socket
     this.newMsgTxt = '';
 
-    return;    
+    return;
+  },
+
+  recvMsg: function(msg){
+    this.messages.push(msg);
   },
 
   /* Use to initialize items when Vue loads */
