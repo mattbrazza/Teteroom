@@ -1,3 +1,6 @@
+// var socket = io();
+var socket = io.connect('http://127.0.0.1:2000');
+
 var vApp = new Vue({ el: "#v-app",
 data: {
   currId: 1, // starting at 1 b/c 0 is 'General'
@@ -16,13 +19,13 @@ data: {
 },
 
 created: function(){ // when Vue inits
-  /* Add joined user to list, announce */
+  /* Add ijoined user to list, announce */
   socket.on('user.joined', function(socketId){
-    this.users.push(socketId);
+    this.users.push({id: 3, name: socketId, isYou: false});
   }.bind(this));
 
   /* Remove user from list, announce */
-  socket.on('user.left', function(socketId{
+  socket.on('user.left', function(socketId){
     let index = this.users.indexOf(socketId);
     if (index >= 0) {
       this.users.splice(index,1);
@@ -30,8 +33,8 @@ created: function(){ // when Vue inits
   }.bind(this));
 
   /* Add new message to chat window */
-  socket.on('chat.msg', function(recv_msg){
-    this.messages.push(recv_msg);
+  socket.on('chat.msg.recv', function(data){
+    this.messages.push(data.text);
   }.bind(this));
 },
 
@@ -93,17 +96,13 @@ methods: {
     }
 
     let newMsg = {
+      user: this.currUser,
       text: this.newMsgTxt,
-      user: this.currUser
     };
-    // TODO: Send message via socket
+    socket.emit('chat.msg.sent', newMsg);
     this.newMsgTxt = '';
 
     return;
-  },
-
-  recvMsg: function(msg){
-    this.messages.push(msg);
   },
 
   /* Use to initialize items when Vue loads */
@@ -113,19 +112,9 @@ methods: {
     this.currUser = this.users[0];
   },
 
-  addUser: function(usr){ this.users.push(usr); },
 }
 });
 vApp.initializeVue();
-
-
-var socket = io.connect('http://127.0.0.1:2000');
-var idd = 33;
-
-socket.on('new_user', function(){
-  vApp.addUser({id: idd, name: 'A'+idd, isYou: false});
-  idd++;
-});
 
 socket.on('msg', function(data){
   if (data.msg) {

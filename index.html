@@ -88,7 +88,8 @@
         
         <div class="panel-body" id="chat-list">
           <ul id="list" class="list-group">
-            <li v-for="n in 10" class="list-group-item">A test message.</li>
+            <li v-for="n in 3" class="list-group-item">A test message.</li>
+            <li v-for="msg in messages" class="list-group-item">{{ msg }}</li>
           </ul>
         </div> <!-- panel-body -->
 
