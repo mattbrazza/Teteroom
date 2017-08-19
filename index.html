@@ -42,9 +42,9 @@
           <ul class="list-group">
             <li class="list-group-item" v-bind:class="{active: room.isActive}"
               v-for="(room, index) in rooms" v-on:click="modRoom(index)">
-              {{ room.title }}
+              {{ room.name }}
               <span class="glyphicon glyphicon-remove pull-right"
-                v-if="!room.isActive" v-on:click="delRoom(index)"></span>
+                v-if="room.isDelable" v-on:click="delRoom(index)"></span>
             </li>
           <ul>
         </div> <!-- panel-body -->
@@ -70,9 +70,8 @@
 
         <div class="panel-body" id="user-list">
           <ul class="list-group">
-            <li class="list-group-item"
-              v-for="(user, index) in users" v-bind:class="{active: user.isYou}">
-              {{ user.name }}
+            <li v-for="(user, index) in users" class="list-group-item">
+              <span v-if="!user.hide">{{ user.name }}</span>
             </li>
           </ul>
         </div> <!-- panel-body -->
@@ -84,12 +83,14 @@
       <!-- CHAT MESSAGES -->
       <div class="col-md-9">
       <div class="panel panel-primary">
-        <div class="panel-heading">Chatroom: {{ currRm }}</div>
+        <div class="panel-heading">Chatroom: {{ currRoom }}</div>
         
         <div class="panel-body" id="chat-list">
           <ul id="list" class="list-group">
             <li v-for="n in 3" class="list-group-item">A test message.</li>
-            <li v-for="msg in messages" class="list-group-item">{{ msg }}</li>
+            <li v-for="msg in messages" class="list-group-item">
+              <span>{{ msg.text }} -- {{ msg.stamp | formatDate }}</span>
+            </li>
           </ul>
         </div> <!-- panel-body -->
 

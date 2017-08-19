@@ -1,93 +1,65 @@
 // var socket = io();
-var socket = io.connect('http://127.0.0.1:2000');
+const socket = io.connect('http://127.0.0.1:2000');
 
-var vApp = new Vue({ el: "#v-app",
+const vApp = new Vue({ el: '#v-app',
 data: {
-  currId: 1, // starting at 1 b/c 0 is 'General'
-  currRm: '',
-  currUser: '',
+  currRoom: null,
+  currUser: null,
+
   rooms: [
-    { id: 0, title: 'General', isActive: true },
+    { id: 0, name: 'General', isActive: true, isDelable: false }
   ],
   users: [
-    { id: 0, name: 'Anon.', isYou: true },
+    { id: 0, name: 'DaSys', hide: true }
   ],
+  messages: [
+    { id: 0, userId: 0, text: 'Welcome to Tete-a-tete', stamp: Date.now() }
+  ],
+
+  msgCnt: 0,
   errMsg: '',
   newRmName: '',
   newMsgTxt: '',
-  messages: [],
 },
 
-created: function(){ // when Vue inits
-  /* Add ijoined user to list, announce */
-  socket.on('user.joined', function(socketId){
-    this.users.push({id: 3, name: socketId, isYou: false});
+created: function(){
+  /* INITIALIZE DATA */
+  this.currRoom = this.rooms[0];
+  this.currUser = this.users[0];
+  this.msgCnt = 0; // TODO: make persistent ?
+
+  /* BIND SOCKET STUFF TO 'THIS' */
+  socket.on('user.joined', function(data){
+    this.users.push({id: data.socketId, name: data.name, hide: false});
+    this.postSysMsg('User: ' + data.name + ' has joined the room');
   }.bind(this));
 
-  /* Remove user from list, announce */
   socket.on('user.left', function(socketId){
-    let index = this.users.indexOf(socketId);
-    if (index >= 0) {
-      this.users.splice(index,1);
+    // TODO: figure a way to use 'indexOf()'
+    let name = '';
+    for(var i=0; i<users.length; i++){
+      if (this.users[i].id = socketId){
+        name = this.users[i].name;
+        this.users.splice(i,1);
+      }
     }
+    this.postSysMsg('User: ' + name + ' has left the room');
   }.bind(this));
 
-  /* Add new message to chat window */
-  socket.on('chat.msg.recv', function(data){
-    this.messages.push(data.text);
+  socket.on('msg.recvd', function(data){
+    this.messages.push({
+      id: msgCnt++,
+      userId: data.socketId,
+      text: data.text,
+      stamp: Date.now(), // TODO: compare to data.stamp for delay times/etc.
+    });
   }.bind(this));
+
 },
 
 methods: {
-  /* Create a new room */
-  addRoom: function(){
-    this.errMsg = null;
-    if (!this.newRmName) {
-      this.errMsg = 'Room must have a name';
-      return;
-    }
-
-    let newRm = {
-      id: this.currId++,
-      title: this.newRmName,
-      isActive: false
-    };
-    this.rooms.push(newRm);
-    this.newRmName = '';
-
-    return;
-  },
-
-  /* Delete a room */
-  delRoom: function(index){
-    this.errMsg = null;
-    let rm = this.rooms[index];
-    if (rm.id === this.currRm.id) {
-      this.errMsg = 'Cannot delete current room';
-      return;
-    }
-
-    this.rooms.splice(index, 1);
-
-    return;
-  },
-
-  /* Modify which is the current room */
-  modRoom: function(index){
-    this.errMsg = null;
-    let rm = this.rooms[index];
-    if (rm.id === this.currRm.id) {
-      this.errMsg = this.currRm.title + ' is already the current room';
-      return;
-    }
-
-    this.currRm.isActive = false;
-    this.currRm = rm;
-    this.currRm.isActive = true;
-
-    return;
-  },
-
+  /* PRIMARY FUNCTIONS
+    ------------------ */
   submitMsg: function(){
     this.errMsg = null;
     if (!this.newMsgTxt) {
@@ -96,64 +68,50 @@ methods: {
     }
 
     let newMsg = {
-      user: this.currUser,
+      id: this.currUser.id,
+      userId: this.currUser.name,
       text: this.newMsgTxt,
+      stamp: Date.now(),
     };
-    socket.emit('chat.msg.sent', newMsg);
+    socket.emit('msg.send', newMsg);
     this.newMsgTxt = '';
 
     return;
   },
 
-  /* Use to initialize items when Vue loads */
-  initializeVue: function(){
-    this.currId = 1;
-    this.currRm = this.rooms[0];
-    this.currUser = this.users[0];
+  addRoom: function(){},
+  delRoom: function(){},
+  modRoom: function(){},
+
+  /* HELPER FUNCTIONS
+    ----------------- */
+  postSysMsg: function(msg){
+    let sysMsg = {
+      id: this.msgCnt++,
+      userId: 0,
+      text: msg,
+      stamp: Date.now(),
+    };
+
+    this.messages.push(sysMsg);
+    return;
   },
 
-}
-});
-vApp.initializeVue();
-
-socket.on('msg', function(data){
-  if (data.msg) {
-    let ul = document.getElementById('list');
-
-    var node = document.createElement('LI');
-    node.classList.add('list-group-item');
-    let txt = data.user.username + ': ' + data.msg;
-    var textNode = document.createTextNode(txt);
-    node.appendChild(textNode);
-
-    ul.appendChild(node);
-  } else {
-    console.error('NO DATA.MSG');
-  }
+  /* SOCKET FUNCTIONS
+    ----------------- */
+},
 });
 
-var submitMsg = function(){
-  vApp.errMsg = null;
-  var msgTxt = document.getElementById('msgTxt');
-  if (!msgTxt.value) {
-    vApp.errMsg = 'Cannot submit a blank message'; 
-    return;
-  }
+/* CUSTOM VUE FILTERS */
+Vue.filter('formatDate', function(stamp){
+  if (!stamp) { return; }
+  let d = new Date(stamp);
+  let date = '';
+  let month = ['Jan','Feb','Mar','Apr','May','Jun','Jul',
+                'Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+  date = d.getDate() + ' ' + month + ' ' + d.getFullYear();
+  date = date + '-' + d.getHours() + ':' + d.getMinutes();
+  return date; // d.toLocaleString();
+});
 
-  let username = 'Anony'; // TODO: create users...
-  let data = {
-    msg: msgTxt.value,
-    user: {
-      username: username || 'Anon.',
-      profPic: 'http://lorempixel.com/100/100'
-    },
-    time: Date.now()
-  };
-
-//  console.log('Data sending: ', data);
-  socket.emit('newMsg', data);
-
-  msgTxt.value = '';
-  return;
-};
 
