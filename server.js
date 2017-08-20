@@ -17,15 +17,15 @@ exApp.get('/', function(req, res){
 });
 
 io.on('connection', function(socket){
-// console.log('SOCKET: ', socket.id);
-  io.emit('user.joined', socket.id);
+  io.emit('user.joined', {id: socket.id, name: socket.id});
 
-  socket.on('chat.msg.sent', function(data){
-    io.emit('chat.msg.recv', data);
+  socket.on('msg.send', function(data){
+    io.emit('msg.recvd', data);
   });
 
   socket.on('disconnect', function(){
-    socket.broadcast.emit('user.left', socket.id);
+//    socket.broadcast.emit('user.left', socket.id);
+    io.emit('user.left', socket.id);
   });
 });
 

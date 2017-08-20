@@ -70,9 +70,8 @@
 
         <div class="panel-body" id="user-list">
           <ul class="list-group">
-            <li v-for="(user, index) in users" class="list-group-item">
-              <span v-if="!user.hide">{{ user.name }}</span>
-            </li>
+            <li v-for="(user, index) in users" v-if="!user.hide"
+                class="list-group-item">{{ user.name }}</li>
           </ul>
         </div> <!-- panel-body -->
       </div> <!-- USER LIST -->
@@ -87,9 +86,9 @@
         
         <div class="panel-body" id="chat-list">
           <ul id="list" class="list-group">
-            <li v-for="n in 3" class="list-group-item">A test message.</li>
             <li v-for="msg in messages" class="list-group-item">
-              <span>{{ msg.text }} -- {{ msg.stamp | formatDate }}</span>
+              <span>{{ msg.text }} -- {{ msg.userId }} -- 
+                {{ msg.stamp | formatDate }}</span>
             </li>
           </ul>
         </div> <!-- panel-body -->
@@ -98,8 +97,8 @@
         <div class="panel-footer">
         <div class="input-group">
           <!-- <input id="msgTxt"/><button onClick="submitMsg()">S</button> -->
-          <input class="form-control" placeholder="Enter message here..."
-            v-model.trim="newMsgTxt" type="text"/>
+          <input class="form-control" placeholder="Enter message..." type="text"
+            v-model.trim="newMsgTxt" v-on:keyup.13='submitMsg'/>
           <div class="input-group-btn">
             <button v-on:click="submitMsg" class="btn btn-primary" role="button">
             Send Msg</button>

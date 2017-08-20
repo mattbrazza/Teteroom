@@ -37,7 +37,7 @@ created: function(){
   socket.on('user.left', function(socketId){
     // TODO: figure a way to use 'indexOf()'
     let name = '';
-    for(var i=0; i<users.length; i++){
+    for(var i=0; i<this.users.length; i++){
       if (this.users[i].id = socketId){
         name = this.users[i].name;
         this.users.splice(i,1);
@@ -48,13 +48,12 @@ created: function(){
 
   socket.on('msg.recvd', function(data){
     this.messages.push({
-      id: msgCnt++,
-      userId: data.socketId,
+      id: this.msgCnt++,
+      userId: data.userName,
       text: data.text,
       stamp: Date.now(), // TODO: compare to data.stamp for delay times/etc.
     });
   }.bind(this));
-
 },
 
 methods: {
@@ -67,9 +66,10 @@ methods: {
       return;
     }
 
+    // TODO: match with msg.recvd || log info on server
     let newMsg = {
       id: this.currUser.id,
-      userId: this.currUser.name,
+      userName: this.currUser.name,
       text: this.newMsgTxt,
       stamp: Date.now(),
     };
@@ -100,18 +100,20 @@ methods: {
   /* SOCKET FUNCTIONS
     ----------------- */
 },
-});
 
-/* CUSTOM VUE FILTERS */
-Vue.filter('formatDate', function(stamp){
-  if (!stamp) { return; }
-  let d = new Date(stamp);
-  let date = '';
-  let month = ['Jan','Feb','Mar','Apr','May','Jun','Jul',
+filters: {
+  formatDate: function(stamp){
+    if (!stamp) { return; }
+    let d = new Date(stamp);
+    let date = '';
+    let month = ['Jan','Feb','Mar','Apr','May','Jun','Jul',
                 'Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
-  date = d.getDate() + ' ' + month + ' ' + d.getFullYear();
-  date = date + '-' + d.getHours() + ':' + d.getMinutes();
-  return date; // d.toLocaleString();
-});
+    date = d.getDate() + ' ' + month + ' ' + d.getFullYear();
+    date = date + '-' + d.getHours() + ':' + d.getMinutes();
+    return date; // d.toLocaleString();
+  },
+},
+
+}); // end of Vue
 
 
