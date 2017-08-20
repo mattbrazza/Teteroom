@@ -16,6 +16,10 @@ exApp.get('/', function(req, res){
   res.sendfile(__dirname + '/index.html');
 });
 
+exApp.get('/getusers', function(req, res){
+  res.send(io.sockets.adapter.rooms);
+});
+
 io.on('connection', function(socket){
   io.emit('user.joined', {id: socket.id, name: socket.id});
 

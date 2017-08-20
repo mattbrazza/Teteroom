@@ -6,12 +6,12 @@ data: {
   currRoom: null,
   currUser: null,
 
-  rooms: [
-    { id: 0, name: 'General', isActive: true, isDelable: false }
-  ],
-  users: [
-    { id: 0, name: 'DaSys', hide: true }
-  ],
+  rooms: {
+    '0': { name: 'General', isActive: true, isDelable: false },
+  },
+  users: {
+    '0': { name: 'System', hide: true },
+  },
   messages: [
     { id: 0, userId: 0, text: 'Welcome to Tete-a-tete', stamp: Date.now() }
   ],
@@ -20,27 +20,41 @@ data: {
   errMsg: '',
   newRmName: '',
   newMsgTxt: '',
+  isInit: true,
+  newUserName: 'a-a',
 },
 
 created: function(){
   /* INITIALIZE DATA */
   this.currRoom = this.rooms[0];
-  this.currUser = this.users[0];
   this.msgCnt = 0; // TODO: make persistent ?
 
   /* BIND SOCKET STUFF TO 'THIS' */
   socket.on('user.joined', function(data){
-    this.users.push({id: data.socketId, name: data.name, hide: false});
-    this.postSysMsg('User: ' + data.name + ' has joined the room');
+    let user = {
+      id: data.id,
+      name: data.name.substring(0,5),
+      hide: false
+    };
+    this.buildUserList(this.users);
+    if (this.isInit) {
+      this.currUser = user;
+      this.postSysMsg('You are in the room as User: ' + user.name);
+      this.isInit = false;
+    } else {
+      this.postSysMsg('User: ' + data.name + ' has joined the room');
+    }
   }.bind(this));
 
   socket.on('user.left', function(socketId){
     // TODO: figure a way to use 'indexOf()'
     let name = '';
     for(var i=0; i<this.users.length; i++){
+console.log('S: ', socketId, '-I: ', this.users[i].id);
       if (this.users[i].id = socketId){
         name = this.users[i].name;
         this.users.splice(i,1);
+console.log('UL: ', i, '--', name);
       }
     }
     this.postSysMsg('User: ' + name + ' has left the room');
@@ -56,7 +70,20 @@ created: function(){
   }.bind(this));
 },
 
+mounted: function(){
+//  document.getElementById('user-modal').style.visibility = 'visible';
+//  $('.modal').collapse('show');
+},
+
 methods: {
+submitUserName: function(){
+  this.errMsg = null;
+  this.currUser.name = this.newUserName;
+  this.newUserName = '';
+  return;
+},
+
+
   /* PRIMARY FUNCTIONS
     ------------------ */
   submitMsg: function(){
@@ -95,6 +122,25 @@ methods: {
 
     this.messages.push(sysMsg);
     return;
+  },
+
+  buildUserList: function(userArr){
+    this.errMsg = null;
+    axios.get('/getusers')
+      .then(function(response){
+        for (var key in response.data) {
+          let user = {
+//            id: key,
+            name: key.substring(0,5),
+            hide: false,
+          };
+          userArr[key] = user;
+        }
+      })
+      .catch(function(err){
+        this.errMsg = 'Error while getting Online Users';
+        console.error(err);
+      });
   },
 
   /* SOCKET FUNCTIONS

@@ -7,8 +7,11 @@
 
   <!-- Bootstrap / Styling -->
   <link rel="stylesheet" crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  
   <style>
-    body { padding-top: 25px; /*65px*/ }
+    body { padding-top: 25px; /*65px*/ z-index: 100; }
     .panel-heading { text-align: center; font-weight: bold; }
     .panel-body { overflow-y: scroll; }
     li.list-group-item.active {}
@@ -23,7 +26,7 @@
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
   <div id="v-app" class="container">
     <div class="header">
-      <h3>Welcome to Teteroom, Tete-a-Tete</h3>
+      <h3>Welcome to Teteroom, Tete-a-Tete ({{ msgCnt  }})</h3>
     </div> <!-- header -->
 
     <div v-show="errMsg" class="alert alert-danger"><span>{{ errMsg }}</span></div>
@@ -96,7 +99,6 @@
         <!-- MESSAGE SUBMIT -->
         <div class="panel-footer">
         <div class="input-group">
-          <!-- <input id="msgTxt"/><button onClick="submitMsg()">S</button> -->
           <input class="form-control" placeholder="Enter message..." type="text"
             v-model.trim="newMsgTxt" v-on:keyup.13='submitMsg'/>
           <div class="input-group-btn">
@@ -110,11 +112,39 @@
       </div> <!-- col -->
 
     </div> <!-- row -->
-  </div> <!-- container -->
+<!--  </div> <- container ->
+
+  <- Trigger the modal with a button ->
+  <div class="container">
+-->  <button type="button" class="btn btn-info btn-lg"
+  data-toggle="modal" data-target="#user-modal">Open Modal</button>
+
+  <!-- USER MODAL -->
+  <div id="user-modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button data-dismiss="modal" class="close" role="button">&times;</button>
+      <h3 class="modal-title">Please select a display name</h3>
+    </div>
+    <div class="modal-body">
+      <input class="form-control" placeholder="Display name..." type="text"
+        v-model.trim="newUserName" v-on:keyup.13='submitUserName'/>
+    </div>
+    <div class="modal-footer">
+      <button v-on:click="submitUserName" data-dismiss="modal"
+        class="btn btn-primary" role="button">Submit</button>
+    </div>
+  </div> <!-- modal-content -->
+  </div> <!-- modal-dialog -->
+  </div> <!-- modal -->
+
+  </div>
 </body>
 
 <!-- Libraries/Controllers (order matters) -->
 <script src="https://unpkg.com/vue" rel="text/javascript"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="/socket.io/socket.io.js" rel="text/javascript"></script>
 <script src="app/app.js" rel="text/javascript"></script>
 
